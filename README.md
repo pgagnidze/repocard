@@ -1,6 +1,6 @@
 <div align="center">
 
-# gh-card
+# ghcard
 
 Generate beautiful social media cards for GitHub repositories.
 
@@ -23,7 +23,7 @@ Generate beautiful social media cards for GitHub repositories.
 ## Installation
 
 ```bash
-npx gh-card generate <owner/repo>
+npx ghcard generate <owner/repo>
 ```
 
 > [!TIP]
@@ -33,32 +33,32 @@ For authenticated requests (5,000 req/hour instead of 60):
 
 ```bash
 export GITHUB_TOKEN=ghp_your_token_here
-npx gh-card generate <owner/repo>
+npx ghcard generate <owner/repo>
 ```
 
 ## Usage
 
 ```bash
 # Generate a minimal card
-gh-card generate facebook/react
+ghcard generate facebook/react
 
 # Generate a detailed card
-gh-card generate facebook/react --style detailed
+ghcard generate facebook/react --style detailed
 
 # Banner format (1500x500, for Twitter/X headers)
-gh-card generate facebook/react --size banner
+ghcard generate facebook/react --size banner
 
 # Square format (1080x1080, for Instagram)
-gh-card generate facebook/react --size square
+ghcard generate facebook/react --size square
 
 # Also save the SVG source
-gh-card generate facebook/react --svg
+ghcard generate facebook/react --svg
 
 # Generate all styles at once
-gh-card generate facebook/react --all --out-dir ./cards
+ghcard generate facebook/react --all --out-dir ./cards
 
 # Batch generate from a JSON file
-gh-card batch repos.json --style detailed --out-dir ./cards
+ghcard batch repos.json --style detailed --out-dir ./cards
 ```
 
 ### Options
@@ -93,7 +93,7 @@ Create a JSON file with a list of repos:
 ```
 
 ```bash
-gh-card batch repos.json --out-dir ./cards
+ghcard batch repos.json --out-dir ./cards
 ```
 
 ## Card Styles

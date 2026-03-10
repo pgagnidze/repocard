@@ -34,11 +34,11 @@ const VALID_SIZES: CardSize[] = ['landscape', 'square', 'banner']
 
 function showHelp(): void {
   console.log(`
-${styleText('bold', 'gh-card')} — Generate beautiful social media cards for GitHub repos
+${styleText('bold', 'ghcard')} — Generate beautiful social media cards for GitHub repos
 
 ${styleText('bold', 'USAGE')}
-  gh-card generate <owner/repo> [options]
-  gh-card batch <file.json> [options]
+  ghcard generate <owner/repo> [options]
+  ghcard batch <file.json> [options]
 
 ${styleText('bold', 'COMMANDS')}
   generate    Generate a card for a single repository
@@ -56,10 +56,10 @@ ${styleText('bold', 'OPTIONS')}
   --help      Show this help message
 
 ${styleText('bold', 'EXAMPLES')}
-  gh-card generate facebook/react
-  gh-card generate facebook/react --style detailed --size square
-  gh-card generate facebook/react --all --out-dir ./cards
-  gh-card batch repos.json --style detailed --out-dir ./cards
+  ghcard generate facebook/react
+  ghcard generate facebook/react --style detailed --size square
+  ghcard generate facebook/react --all --out-dir ./cards
+  ghcard batch repos.json --style detailed --out-dir ./cards
 `)
 }
 
@@ -174,7 +174,7 @@ async function main(): Promise<void> {
   })
 
   if (values.version) {
-    process.stdout.write(`gh-card ${getVersion()}\n`)
+    process.stdout.write(`ghcard ${getVersion()}\n`)
     process.exit(0)
   }
 
@@ -200,7 +200,7 @@ async function main(): Promise<void> {
   if (command === 'generate') {
     const repoInput = positionals[1]
     if (!repoInput) {
-      console.error(styleText('red', 'Missing repo argument. Usage: gh-card generate owner/repo'))
+      console.error(styleText('red', 'Missing repo argument. Usage: ghcard generate owner/repo'))
       process.exit(1)
     }
 
@@ -212,7 +212,7 @@ async function main(): Promise<void> {
   } else if (command === 'batch') {
     const filePath = positionals[1]
     if (!filePath) {
-      console.error(styleText('red', 'Missing file argument. Usage: gh-card batch repos.json'))
+      console.error(styleText('red', 'Missing file argument. Usage: ghcard batch repos.json'))
       process.exit(1)
     }
     await batchGenerate(filePath, style, size, values['out-dir']!, values.svg!, values.token)
