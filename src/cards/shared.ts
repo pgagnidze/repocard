@@ -19,8 +19,8 @@ export const COLORS = {
 } as const
 
 export const FONTS = {
-  sans: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-  mono: "'JetBrains Mono', 'Fira Code', monospace",
+  sans: 'Comfortaa, Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+  mono: "Comfortaa, 'JetBrains Mono', 'Fira Code', monospace",
 } as const
 
 export function sparkline(
