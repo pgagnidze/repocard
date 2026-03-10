@@ -1,3 +1,15 @@
+## [1.1.4](https://github.com/pgagnidze/repocard/compare/v1.1.3...v1.1.4) (2026-03-10)
+
+
+### Bug Fixes
+
+* use comfortaa as primary font for consistent card rendering ([fa25377](https://github.com/pgagnidze/repocard/commit/fa2537712fc26e8105ed988f28b32bb6a0372137))
+
+
+### Reverts
+
+* Revert "fix: prefer noto sans and noto sans mono as primary fonts" ([b5045e4](https://github.com/pgagnidze/repocard/commit/b5045e47b03635219383997b0bf89786c1338135))
+
 ## [1.1.3](https://github.com/pgagnidze/repocard/compare/v1.1.2...v1.1.3) (2026-03-10)
 
 
