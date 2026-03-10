@@ -1,10 +1,13 @@
 <div align="center">
 
-# ghcard
+# repocard
 
 Generate beautiful social media cards for GitHub repositories.
 
 ![License:MIT](https://img.shields.io/static/v1?label=License&message=MIT&color=blue&style=flat-square)
+[![npm version](https://img.shields.io/npm/v/repocard?style=flat-square)](https://www.npmjs.com/package/repocard)
+[![npm downloads](https://img.shields.io/npm/dm/repocard.svg)](https://www.npmjs.com/package/repocard)
+[![Install size](https://packagephobia.com/badge?p=repocard)](https://packagephobia.com/result?p=repocard)
 
 </div>
 
@@ -23,7 +26,7 @@ Generate beautiful social media cards for GitHub repositories.
 ## Installation
 
 ```bash
-npx ghcard generate <owner/repo>
+npx repocard generate <owner/repo>
 ```
 
 > [!TIP]
@@ -33,32 +36,32 @@ For authenticated requests (5,000 req/hour instead of 60):
 
 ```bash
 export GITHUB_TOKEN=ghp_your_token_here
-npx ghcard generate <owner/repo>
+npx repocard generate <owner/repo>
 ```
 
 ## Usage
 
 ```bash
 # Generate a minimal card
-ghcard generate facebook/react
+repocard generate facebook/react
 
 # Generate a detailed card
-ghcard generate facebook/react --style detailed
+repocard generate facebook/react --style detailed
 
 # Banner format (1500x500, for Twitter/X headers)
-ghcard generate facebook/react --size banner
+repocard generate facebook/react --size banner
 
 # Square format (1080x1080, for Instagram)
-ghcard generate facebook/react --size square
+repocard generate facebook/react --size square
 
 # Also save the SVG source
-ghcard generate facebook/react --svg
+repocard generate facebook/react --svg
 
 # Generate all styles at once
-ghcard generate facebook/react --all --out-dir ./cards
+repocard generate facebook/react --all --out-dir ./cards
 
 # Batch generate from a JSON file
-ghcard batch repos.json --style detailed --out-dir ./cards
+repocard batch repos.json --style detailed --out-dir ./cards
 ```
 
 ### Options
@@ -71,7 +74,8 @@ ghcard batch repos.json --style detailed --out-dir ./cards
 --svg                Also save the SVG source
 --token <token>      GitHub API token for higher rate limits
 --all                Generate all styles at once
---help               Show help
+-v, --version        Show version
+-h, --help           Show help
 ```
 
 ### Environment
@@ -93,7 +97,7 @@ Create a JSON file with a list of repos:
 ```
 
 ```bash
-ghcard batch repos.json --out-dir ./cards
+repocard batch repos.json --out-dir ./cards
 ```
 
 ## Card Styles

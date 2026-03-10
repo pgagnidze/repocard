@@ -1,10 +1,10 @@
 {
-  "name": "ghcard",
+  "name": "repocard",
   "version": "1.0.1",
   "description": "Generate beautiful social media cards for GitHub repositories",
   "type": "module",
   "bin": {
-    "ghcard": "./bin/gh-card"
+    "repocard": "./bin/gh-card"
   },
   "engines": {
     "node": ">=22.18.0"
@@ -39,7 +39,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pgagnidze/ghcard"
+    "url": "https://github.com/pgagnidze/repocard"
   },
   "license": "MIT",
   "dependencies": {
