@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/pgagnidze/ghcard/compare/v1.0.0...v1.0.1) (2026-03-10)
+
+
+### Bug Fixes
+
+* upgrade tsdown to support build metadata injection ([2c931a7](https://github.com/pgagnidze/ghcard/commit/2c931a7485ff2ee02242b0dfa066b0a826276850))
+
 # 1.0.0 (2026-03-10)
 
 
