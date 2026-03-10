@@ -1,0 +1,27 @@
+{
+  "name": "gh-card",
+  "version": "0.1.0",
+  "description": "Generate beautiful social media cards for GitHub repositories",
+  "type": "module",
+  "bin": {
+    "gh-card": "bin/gh-card"
+  },
+  "files": [
+    "dist/",
+    "bin/",
+    "fonts/"
+  ],
+  "scripts": {
+    "dev": "node --experimental-strip-types src/cli.ts",
+    "build": "tsdown",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  },
+  "devDependencies": {
+    "tsdown": "^0.12.5",
+    "typescript": "^5.8.3"
+  }
+}
