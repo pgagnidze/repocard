@@ -1,6 +1,6 @@
 {
   "name": "repocard",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Generate beautiful social media cards for GitHub repositories",
   "type": "module",
   "bin": {

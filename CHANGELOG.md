@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/pgagnidze/repocard/compare/v1.1.1...v1.1.2) (2026-03-10)
+
+
+### Bug Fixes
+
+* correct ascii art to properly render the letter d ([daef00a](https://github.com/pgagnidze/repocard/commit/daef00aed0407210c4be7d60b6d1b7265441c75c))
+
 ## [1.1.1](https://github.com/pgagnidze/repocard/compare/v1.1.0...v1.1.1) (2026-03-10)
 
 
