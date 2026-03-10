@@ -1,11 +1,4 @@
-import type {
-  CardData,
-  CardStyle,
-  CommunityHealth,
-  LanguageBreakdown,
-  ReleaseInfo,
-  RepoData,
-} from './types.ts'
+import type { CardData, CardStyle, CommunityHealth, LanguageBreakdown, ReleaseInfo, RepoData } from './types.ts'
 
 const API_BASE = 'https://api.github.com'
 const STATS_RETRY_DELAY_MS = 2000
@@ -144,22 +137,18 @@ async function fetchOpenPullRequestCount(owner: string, repo: string, token?: st
 }
 
 async function fetchCommitActivity(owner: string, repo: string, token?: string): Promise<number[]> {
-  const data = await apiFetchWithRetry<GitHubCommitActivity[]>(
-    `/repos/${owner}/${repo}/stats/commit_activity`,
-    token,
-  )
+  const data = await apiFetchWithRetry<GitHubCommitActivity[]>(`/repos/${owner}/${repo}/stats/commit_activity`, token)
   if (!data) {
-    console.warn(`[warn] Could not fetch commit activity for ${owner}/${repo} (GitHub stats not ready). Sparkline will be empty.`)
+    console.warn(
+      `[warn] Could not fetch commit activity for ${owner}/${repo} (GitHub stats not ready). Sparkline will be empty.`,
+    )
     return []
   }
   return data.map((week) => week.total)
 }
 
 async function fetchLatestRelease(owner: string, repo: string, token?: string): Promise<ReleaseInfo | null> {
-  const data = await apiFetchWithRetry<GitHubRelease>(
-    `/repos/${owner}/${repo}/releases/latest`,
-    token,
-  )
+  const data = await apiFetchWithRetry<GitHubRelease>(`/repos/${owner}/${repo}/releases/latest`, token)
   if (!data) {
     return null
   }
@@ -171,10 +160,7 @@ async function fetchLatestRelease(owner: string, repo: string, token?: string): 
 }
 
 async function fetchCommunityHealth(owner: string, repo: string, token?: string): Promise<CommunityHealth | null> {
-  const data = await apiFetchWithRetry<GitHubCommunityProfile>(
-    `/repos/${owner}/${repo}/community/profile`,
-    token,
-  )
+  const data = await apiFetchWithRetry<GitHubCommunityProfile>(`/repos/${owner}/${repo}/community/profile`, token)
   if (!data) {
     return null
   }

@@ -39,21 +39,18 @@ export function sparkline(
   const gap = 1.5
   const barWidth = (width - gap * (data.length - 1)) / data.length
 
-  return data.map((value, i) => {
-    const barHeight = Math.max((value / maxVal) * height, 1)
-    const barX = x + i * (barWidth + gap)
-    const barY = y + height - barHeight
-    const opacity = 0.3 + (value / maxVal) * 0.7
-    return `<rect x="${barX.toFixed(1)}" y="${barY.toFixed(1)}" width="${barWidth.toFixed(1)}" height="${barHeight.toFixed(1)}" rx="1.5" fill="${color}" opacity="${opacity.toFixed(2)}"/>`
-  }).join('\n')
+  return data
+    .map((value, i) => {
+      const barHeight = Math.max((value / maxVal) * height, 1)
+      const barX = x + i * (barWidth + gap)
+      const barY = y + height - barHeight
+      const opacity = 0.3 + (value / maxVal) * 0.7
+      return `<rect x="${barX.toFixed(1)}" y="${barY.toFixed(1)}" width="${barWidth.toFixed(1)}" height="${barHeight.toFixed(1)}" rx="1.5" fill="${color}" opacity="${opacity.toFixed(2)}"/>`
+    })
+    .join('\n')
 }
 
-export function versionBadge(
-  tagName: string,
-  x: number,
-  y: number,
-  prerelease = false,
-): string {
+export function versionBadge(tagName: string, x: number, y: number, prerelease = false): string {
   const color = prerelease ? COLORS.warning : COLORS.success
   const textWidth = tagName.length * 7.5 + 20
 
@@ -79,24 +76,20 @@ export function healthDots(
   ]
 
   let offsetX = 0
-  return items.map((item) => {
-    const dotColor = item.has ? COLORS.success : COLORS.textMuted
-    const dotOpacity = item.has ? '0.8' : '0.3'
-    const result = `
+  return items
+    .map((item) => {
+      const dotColor = item.has ? COLORS.success : COLORS.textMuted
+      const dotOpacity = item.has ? '0.8' : '0.3'
+      const result = `
       <circle cx="${x + offsetX + 4}" cy="${y + 4}" r="3" fill="${dotColor}" opacity="${dotOpacity}"/>
       <text x="${x + offsetX + 12}" y="${y + 8}" font-family="${FONTS.mono}" font-size="9" fill="${COLORS.textMuted}" letter-spacing="0.3">${item.label}</text>`
-    offsetX += 12 + item.label.length * 5.5 + 12
-    return result
-  }).join('\n')
+      offsetX += 12 + item.label.length * 5.5 + 12
+      return result
+    })
+    .join('\n')
 }
 
-export function languageBar(
-  languages: LanguageBreakdown,
-  x: number,
-  y: number,
-  width: number,
-  height = 6,
-): string {
+export function languageBar(languages: LanguageBreakdown, x: number, y: number, width: number, height = 6): string {
   const total = Object.values(languages).reduce((a, b) => a + b, 0)
   if (total === 0) {
     return ''
@@ -130,12 +123,7 @@ export function languageBar(
     </g>`
 }
 
-export function topicPills(
-  topics: string[],
-  x: number,
-  y: number,
-  maxWidth: number,
-): string {
+export function topicPills(topics: string[], x: number, y: number, maxWidth: number): string {
   if (topics.length === 0) {
     return ''
   }

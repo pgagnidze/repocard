@@ -15,11 +15,7 @@ export interface RenderResult {
   height: number
 }
 
-export async function generateCard(
-  data: CardData,
-  style: CardStyle,
-  size: CardSize,
-): Promise<RenderResult> {
+export async function generateCard(data: CardData, style: CardStyle, size: CardSize): Promise<RenderResult> {
   const svg = renderCard(data, style, size)
   const { width, height } = CARD_DIMENSIONS[size]
 

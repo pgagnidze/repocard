@@ -2,24 +2,31 @@ import type { CardData, CardSize } from '../types.ts'
 
 import { escapeXml, formatCount, timeAgo, truncate } from '../format.ts'
 import { CARD_DIMENSIONS, LANGUAGE_COLORS } from '../types.ts'
-import { COLORS, FONTS, forkSvg, healthDots, languageBar, sparkline, starSvg, topicPills, versionBadge } from './shared.ts'
+import {
+  COLORS,
+  FONTS,
+  forkSvg,
+  healthDots,
+  languageBar,
+  sparkline,
+  starSvg,
+  topicPills,
+  versionBadge,
+} from './shared.ts'
 
-function buildLangLegend(
-  topLangs: [string, number][],
-  totalBytes: number,
-  pad: number,
-  legendY: number,
-): string {
+function buildLangLegend(topLangs: [string, number][], totalBytes: number, pad: number, legendY: number): string {
   let legendX = 0
-  return topLangs.map(([lang, bytes]) => {
-    const pct = ((bytes / totalBytes) * 100).toFixed(1)
-    const color = LANGUAGE_COLORS[lang] ?? COLORS.textMuted
-    const item = `
+  return topLangs
+    .map(([lang, bytes]) => {
+      const pct = ((bytes / totalBytes) * 100).toFixed(1)
+      const color = LANGUAGE_COLORS[lang] ?? COLORS.textMuted
+      const item = `
       <circle cx="${pad + legendX + 5}" cy="${legendY + 4}" r="4" fill="${color}"/>
       <text x="${pad + legendX + 14}" y="${legendY + 8}" font-family="${FONTS.sans}" font-size="11" fill="${COLORS.textMuted}">${escapeXml(lang)} ${pct}%</text>`
-    legendX += 14 + (lang.length + pct.length + 2) * 6.2 + 16
-    return item
-  }).join('\n')
+      legendX += 14 + (lang.length + pct.length + 2) * 6.2 + 16
+      return item
+    })
+    .join('\n')
 }
 
 function renderBanner(data: CardData): string {
@@ -109,11 +116,15 @@ function renderBanner(data: CardData): string {
       ${forkSvg(0.65)}
       <text x="12" y="9" font-family="${FONTS.mono}" font-size="14" fill="${COLORS.textSecondary}">${forks}</text>
     </g>
-    ${primaryLang && langColor ? `
+    ${
+      primaryLang && langColor
+        ? `
     <g transform="translate(${14 + stars.length * 9 + 20 + 12 + forks.length * 9 + 20}, 0)">
       <circle cx="5" cy="5" r="4" fill="${langColor}"/>
       <text x="14" y="9" font-family="${FONTS.sans}" font-size="12" fill="${COLORS.textSecondary}">${escapeXml(primaryLang)}</text>
-    </g>` : ''}
+    </g>`
+        : ''
+    }
   </g>
 
   <text x="${pad}" y="${statsY + 28}" font-family="${FONTS.mono}" font-size="11" fill="${COLORS.textMuted}">${pushed}</text>
@@ -215,20 +226,28 @@ function renderDefault(data: CardData, size: CardSize): string {
       ${forkSvg(0.75)}
       <text x="14" y="10" font-family="${FONTS.mono}" font-size="15" fill="${COLORS.textSecondary}">${forks}</text>
     </g>
-    ${primaryLang && langColor ? `
+    ${
+      primaryLang && langColor
+        ? `
     <g transform="translate(${16 + stars.length * 9.5 + 24 + 14 + forks.length * 9.5 + 24}, 0)">
       <circle cx="6" cy="6" r="5" fill="${langColor}"/>
       <text x="16" y="10" font-family="${FONTS.sans}" font-size="13" fill="${COLORS.textSecondary}">${escapeXml(primaryLang)}</text>
-    </g>` : ''}
+    </g>`
+        : ''
+    }
 
     <text x="${contentWidth}" y="10" font-family="${FONTS.mono}" font-size="12" fill="${COLORS.textMuted}" text-anchor="end">
       <tspan fill="${COLORS.textSecondary}">${watchers}</tspan> watching  <tspan fill="${COLORS.textSecondary}">${issueCount}</tspan> issues  <tspan fill="${COLORS.textSecondary}">${prCount}</tspan> PRs
     </text>
   </g>
 
-  ${hasActivity ? `
+  ${
+    hasActivity
+      ? `
   <text x="${pad}" y="${sparkY - 8}" font-family="${FONTS.mono}" font-size="10" fill="${COLORS.textMuted}" letter-spacing="1">COMMIT ACTIVITY</text>
-  ${sparkline(commitActivity, pad, sparkY, sparkWidth, sparkHeight, COLORS.accent)}` : ''}
+  ${sparkline(commitActivity, pad, sparkY, sparkWidth, sparkHeight, COLORS.accent)}`
+      : ''
+  }
 
   <line x1="${pad}" y1="${dividerY}" x2="${width - pad}" y2="${dividerY}" stroke="${COLORS.cardBorder}" stroke-width="1"/>
   ${languageBar(languages, pad, langBarY, contentWidth, langBarHeight)}

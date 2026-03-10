@@ -20,8 +20,16 @@ export function renderMinimal(data: CardData, size: CardSize): string {
   const description = truncate(repo.description, maxDescLen)
 
   const nameFontSize = isBanner
-    ? (repo.name.length > 20 ? 34 : repo.name.length > 14 ? 42 : 48)
-    : (repo.name.length > 20 ? 40 : repo.name.length > 14 ? 50 : 60)
+    ? repo.name.length > 20
+      ? 34
+      : repo.name.length > 14
+        ? 42
+        : 48
+    : repo.name.length > 20
+      ? 40
+      : repo.name.length > 14
+        ? 50
+        : 60
 
   const nameY = isSquare ? height / 2 - 20 : height / 2 - 10
   const ownerY = pad
@@ -80,12 +88,16 @@ export function renderMinimal(data: CardData, size: CardSize): string {
       ${forkSvg(0.85)}
       <text x="16" y="6" font-family="${FONTS.mono}" font-size="16" fill="${COLORS.textSecondary}">${forks}</text>
     </g>
-    ${primaryLang ? `
+    ${
+      primaryLang
+        ? `
     <g transform="translate(${width - pad * 2 - primaryLang.length * 8 - 40}, -10)">
       <rect x="0" y="0" width="${primaryLang.length * 8 + 32}" height="26" rx="13" fill="rgba(0,0,0,0.3)" stroke="${langColor}" stroke-width="1" opacity="0.8"/>
       <circle cx="14" cy="13" r="4" fill="${langColor}"/>
       <text x="24" y="17" font-family="${FONTS.sans}" font-size="13" fill="${COLORS.textSecondary}" font-weight="500">${escapeXml(primaryLang)}</text>
-    </g>` : ''}
+    </g>`
+        : ''
+    }
   </g>
 </svg>`
 }
