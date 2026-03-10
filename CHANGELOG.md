@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/pgagnidze/repocard/compare/v1.1.2...v1.1.3) (2026-03-10)
+
+
+### Bug Fixes
+
+* prefer noto sans and noto sans mono as primary fonts ([9391722](https://github.com/pgagnidze/repocard/commit/93917220ab4c48ec6ee923655a15e703ead8e143))
+
 ## [1.1.2](https://github.com/pgagnidze/repocard/compare/v1.1.1...v1.1.2) (2026-03-10)
 
 
