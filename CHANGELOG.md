@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/pgagnidze/repocard/compare/v1.0.1...v1.1.0) (2026-03-10)
+
+
+### Features
+
+* rename package to repocard and add npm badges ([7729c71](https://github.com/pgagnidze/repocard/commit/7729c716ad121e87ec380154d89f0813cdad06f2))
+
 ## [1.0.1](https://github.com/pgagnidze/ghcard/compare/v1.0.0...v1.0.1) (2026-03-10)
 
 
