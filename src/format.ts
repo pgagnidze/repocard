@@ -30,5 +30,5 @@ const XML_ESCAPE_MAP: Record<string, string> = {
 }
 
 export function escapeXml(str: string): string {
-  return str.replace(/[&<>"']/g, (c) => XML_ESCAPE_MAP[c])
+  return str.replace(/[&<>"']/g, (c) => XML_ESCAPE_MAP[c]!)
 }

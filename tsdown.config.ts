@@ -7,4 +7,8 @@ export default defineConfig({
   skipNodeModulesBundle: true,
   clean: true,
   outDir: 'dist',
+  env: {
+    GITHUB_SHA: process.env.GITHUB_SHA || '',
+    BUILD_DATE: process.env.BUILD_DATE || '',
+  },
 })

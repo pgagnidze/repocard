@@ -1,10 +1,33 @@
 import type { CardSize, CardStyle } from './types.ts'
 
+import { readFileSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { parseArgs, styleText } from 'node:util'
 import { fetchCardData, parseRepoInput } from './github.ts'
 import { generateCard, saveCard, saveSvg } from './render.ts'
+
+function getVersion(): string {
+  try {
+    const __dirname = dirname(fileURLToPath(import.meta.url))
+    const pkg = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf-8')) as { version: string }
+    const version = pkg.version ?? 'unknown'
+
+    const buildInfo: string[] = []
+    if (process.env.GITHUB_SHA) {
+      buildInfo.push(`commit: ${process.env.GITHUB_SHA.substring(0, 7)}`)
+    }
+    if (process.env.BUILD_DATE) {
+      buildInfo.push(`built: ${process.env.BUILD_DATE}`)
+    }
+    const suffix = buildInfo.length > 0 ? ` (${buildInfo.join(', ')})` : ''
+
+    return `${version}${suffix}`
+  } catch {
+    return 'unknown'
+  }
+}
 
 const VALID_STYLES: CardStyle[] = ['minimal', 'detailed']
 const VALID_SIZES: CardSize[] = ['landscape', 'square', 'banner']
@@ -29,6 +52,7 @@ ${styleText('bold', 'OPTIONS')}
   --svg       Also save the SVG source
   --token     GitHub API token for higher rate limits
   --all       Generate all styles at once
+  --version   Show version
   --help      Show this help message
 
 ${styleText('bold', 'EXAMPLES')}
@@ -144,9 +168,15 @@ async function main(): Promise<void> {
       svg: { type: 'boolean', default: false },
       token: { type: 'string', default: process.env.GITHUB_TOKEN },
       all: { type: 'boolean', default: false },
+      version: { type: 'boolean', short: 'v', default: false },
       help: { type: 'boolean', default: false },
     },
   })
+
+  if (values.version) {
+    process.stdout.write(`gh-card ${getVersion()}\n`)
+    process.exit(0)
+  }
 
   if (values.help || positionals.length === 0) {
     showHelp()
