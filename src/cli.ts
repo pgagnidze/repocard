@@ -8,6 +8,38 @@ import { parseArgs, styleText } from 'node:util'
 import { fetchCardData, parseRepoInput } from './github.ts'
 import { generateCard, saveCard, saveSvg } from './render.ts'
 
+function shouldUseColor(): boolean {
+  if (process.env['NO_COLOR'] !== undefined) {
+    return false
+  }
+  if (process.env['TERM'] === 'dumb') {
+    return false
+  }
+  if (process.argv.includes('--no-color')) {
+    return false
+  }
+  return process.stderr.isTTY === true
+}
+
+function style(format: string | string[], text: string): string {
+  if (!shouldUseColor()) {
+    return text
+  }
+  return styleText(format as Parameters<typeof styleText>[0], text)
+}
+
+function info(message: string): void {
+  process.stderr.write(style('dim', `  ${message}`) + '\n')
+}
+
+function success(message: string): void {
+  process.stderr.write(style('green', `  ${message}`) + '\n')
+}
+
+function error(message: string): void {
+  process.stderr.write(style('red', `  ${message}`) + '\n')
+}
+
 function getVersion(): string {
   try {
     const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -32,40 +64,46 @@ function getVersion(): string {
 const VALID_STYLES: CardStyle[] = ['minimal', 'detailed']
 const VALID_SIZES: CardSize[] = ['landscape', 'square', 'banner']
 
-function showHelp(): void {
-  console.log(`
-${styleText('bold', 'repocard')} — Generate beautiful social media cards for GitHub repos
+const HELP = `
+                                       _
+   _ __ ___ _ __   ___   ___ __ _ _ __| |
+  | '__/ _ \\ '_ \\ / _ \\ / __/ _\` | '__| |
+  | | |  __/ |_) | (_) | (_| (_| | |  |_|
+  |_|  \\___|  __/ \\___/ \\___\\__,_|_|  (_)
+            |_|
+  Generate beautiful social media cards for GitHub repos.
 
-${styleText('bold', 'USAGE')}
-  repocard generate <owner/repo> [options]
-  repocard batch <file.json> [options]
+  Usage:
+    repocard generate <owner/repo>    Generate a card for a single repo
+    repocard batch <file.json>        Generate cards from a JSON file
 
-${styleText('bold', 'COMMANDS')}
-  generate    Generate a card for a single repository
-  batch       Generate cards for multiple repos from a JSON file
+  Options:
+    --style <style>       Card style: minimal, detailed   (default: minimal)
+    --size <size>         Output size: landscape, square,  (default: landscape)
+                          banner
+    --out <path>          Output file path                 (overrides --out-dir)
+    --out-dir <dir>       Output directory                 (default: ./output)
+    --svg                 Also save the SVG source
+    --token <token>       GitHub API token
+    --all                 Generate all styles at once
+    --no-color            Disable colors
+    -h, --help            Show this help
+    -v, --version         Show version
 
-${styleText('bold', 'OPTIONS')}
-  --style     Card style: minimal, detailed         (default: minimal)
-  --size      Output size: landscape, square, banner (default: landscape)
-  --out       Output file path                      (overrides --out-dir)
-  --out-dir   Output directory                      (default: ./output)
-  --svg       Also save the SVG source
-  --token     GitHub API token for higher rate limits
-  --all       Generate all styles at once
-  --version   Show version
-  --help      Show this help message
+  Environment:
+    GITHUB_TOKEN          GitHub token (alternative to --token)
+    NO_COLOR              Disable colors (any value)
 
-${styleText('bold', 'EXAMPLES')}
-  repocard generate facebook/react
-  repocard generate facebook/react --style detailed --size square
-  repocard generate facebook/react --all --out-dir ./cards
-  repocard batch repos.json --style detailed --out-dir ./cards
-`)
-}
+  Examples:
+    npx repocard generate facebook/react
+    npx repocard generate facebook/react --style detailed --size square
+    npx repocard generate facebook/react --all --out-dir ./cards
+    npx repocard batch repos.json --style detailed --out-dir ./cards
+`
 
 async function generateSingle(
   repoInput: string,
-  style: CardStyle,
+  cardStyle: CardStyle,
   size: CardSize,
   outputPath: string | undefined,
   outDir: string,
@@ -74,20 +112,20 @@ async function generateSingle(
 ): Promise<void> {
   const { owner, repo } = parseRepoInput(repoInput)
 
-  console.log(styleText('blue', `Fetching ${owner}/${repo}...`))
-  const data = await fetchCardData(owner, repo, token, style)
+  info(`Fetching ${owner}/${repo}...`)
+  const data = await fetchCardData(owner, repo, token, cardStyle)
 
-  console.log(styleText('blue', `Rendering ${style} card...`))
-  const result = await generateCard(data, style, size)
+  info(`Rendering ${cardStyle} card...`)
+  const result = await generateCard(data, cardStyle, size)
 
-  const outFile = outputPath ?? join(outDir, `${repo}-${style}.png`)
+  const outFile = outputPath ?? join(outDir, `${repo}-${cardStyle}.png`)
   await saveCard(result, outFile)
-  console.log(styleText('green', `✓ Saved ${outFile} (${result.width}×${result.height})`))
+  success(`Saved ${outFile} (${result.width}x${result.height})`)
 
   if (shouldSaveSvg) {
     const svgFile = outFile.replace(/\.png$/, '.svg')
     await saveSvg(result.svg, svgFile)
-    console.log(styleText('green', `✓ Saved ${svgFile}`))
+    success(`Saved ${svgFile}`)
   }
 }
 
@@ -100,21 +138,21 @@ async function generateAll(
 ): Promise<void> {
   const { owner, repo } = parseRepoInput(repoInput)
 
-  console.log(styleText('blue', `Fetching ${owner}/${repo}...`))
+  info(`Fetching ${owner}/${repo}...`)
   const data = await fetchCardData(owner, repo, token)
 
-  for (const style of VALID_STYLES) {
-    console.log(styleText('blue', `Rendering ${style} card...`))
-    const result = await generateCard(data, style, size)
+  for (const cardStyle of VALID_STYLES) {
+    info(`Rendering ${cardStyle} card...`)
+    const result = await generateCard(data, cardStyle, size)
 
-    const outFile = join(outDir, `${repo}-${style}.png`)
+    const outFile = join(outDir, `${repo}-${cardStyle}.png`)
     await saveCard(result, outFile)
-    console.log(styleText('green', `✓ Saved ${outFile} (${result.width}×${result.height})`))
+    success(`Saved ${outFile} (${result.width}x${result.height})`)
 
     if (shouldSaveSvg) {
       const svgFile = outFile.replace(/\.png$/, '.svg')
       await saveSvg(result.svg, svgFile)
-      console.log(styleText('green', `✓ Saved ${svgFile}`))
+      success(`Saved ${svgFile}`)
     }
   }
 }
@@ -135,24 +173,24 @@ async function batchGenerate(
   const content = await readFile(resolve(filePath), 'utf-8')
   const entries = JSON.parse(content) as BatchEntry[]
 
-  console.log(styleText('blue', `Processing ${entries.length} repos...`))
+  info(`Processing ${entries.length} repos...`)
 
   for (const entry of entries) {
-    const style = entry.style ?? defaultStyle
+    const cardStyle = entry.style ?? defaultStyle
     try {
       const { owner, repo } = parseRepoInput(entry.repo)
-      const data = await fetchCardData(owner, repo, token, style)
-      const result = await generateCard(data, style, size)
-      const outFile = join(outDir, `${repo}-${style}.png`)
+      const data = await fetchCardData(owner, repo, token, cardStyle)
+      const result = await generateCard(data, cardStyle, size)
+      const outFile = join(outDir, `${repo}-${cardStyle}.png`)
       await saveCard(result, outFile)
-      console.log(styleText('green', `✓ ${entry.repo} → ${outFile}`))
+      success(`${entry.repo} -> ${outFile}`)
 
       if (shouldSaveSvg) {
         const svgFile = outFile.replace(/\.png$/, '.svg')
         await saveSvg(result.svg, svgFile)
       }
     } catch (err) {
-      console.error(styleText('red', `✗ ${entry.repo}: ${err instanceof Error ? err.message : String(err)}`))
+      error(`${entry.repo}: ${err instanceof Error ? err.message : String(err)}`)
     }
   }
 }
@@ -168,6 +206,7 @@ async function main(): Promise<void> {
       svg: { type: 'boolean', default: false },
       token: { type: 'string', default: process.env.GITHUB_TOKEN },
       all: { type: 'boolean', default: false },
+      'no-color': { type: 'boolean', default: false },
       version: { type: 'boolean', short: 'v', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
@@ -179,51 +218,51 @@ async function main(): Promise<void> {
   }
 
   if (values.help || positionals.length === 0) {
-    showHelp()
+    process.stdout.write(HELP)
     process.exit(0)
   }
 
   const command = positionals[0]
-  const style = values.style as CardStyle
+  const cardStyle = values.style as CardStyle
   const size = values.size as CardSize
 
-  if (!VALID_STYLES.includes(style)) {
-    console.error(styleText('red', `Invalid style: ${style}. Use: ${VALID_STYLES.join(', ')}`))
+  if (!VALID_STYLES.includes(cardStyle)) {
+    error(`Invalid style: ${cardStyle}. Use: ${VALID_STYLES.join(', ')}`)
     process.exit(1)
   }
 
   if (!VALID_SIZES.includes(size)) {
-    console.error(styleText('red', `Invalid size: ${size}. Use: ${VALID_SIZES.join(', ')}`))
+    error(`Invalid size: ${size}. Use: ${VALID_SIZES.join(', ')}`)
     process.exit(1)
   }
 
   if (command === 'generate') {
     const repoInput = positionals[1]
     if (!repoInput) {
-      console.error(styleText('red', 'Missing repo argument. Usage: repocard generate owner/repo'))
+      error('Missing repo argument. Usage: repocard generate owner/repo')
       process.exit(1)
     }
 
     if (values.all) {
       await generateAll(repoInput, size, values['out-dir']!, values.svg!, values.token)
     } else {
-      await generateSingle(repoInput, style, size, values.out, values['out-dir']!, values.svg!, values.token)
+      await generateSingle(repoInput, cardStyle, size, values.out, values['out-dir']!, values.svg!, values.token)
     }
   } else if (command === 'batch') {
     const filePath = positionals[1]
     if (!filePath) {
-      console.error(styleText('red', 'Missing file argument. Usage: repocard batch repos.json'))
+      error('Missing file argument. Usage: repocard batch repos.json')
       process.exit(1)
     }
-    await batchGenerate(filePath, style, size, values['out-dir']!, values.svg!, values.token)
+    await batchGenerate(filePath, cardStyle, size, values['out-dir']!, values.svg!, values.token)
   } else {
-    console.error(styleText('red', `Unknown command: ${command}`))
-    showHelp()
+    error(`Unknown command: ${command}`)
+    process.stdout.write(HELP)
     process.exit(1)
   }
 }
 
 main().catch((err: unknown) => {
-  console.error(styleText('red', err instanceof Error ? err.message : String(err)))
+  error(err instanceof Error ? err.message : String(err))
   process.exit(1)
 })
