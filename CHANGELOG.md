@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/pgagnidze/repocard/compare/v1.1.0...v1.1.1) (2026-03-10)
+
+
+### Bug Fixes
+
+* match cli output styling and help layout with lastgen ([4e6a2b2](https://github.com/pgagnidze/repocard/commit/4e6a2b2b6eceb6c799de2695a01424b3975da88e))
+
 # [1.1.0](https://github.com/pgagnidze/repocard/compare/v1.0.1...v1.1.0) (2026-03-10)
 
 
