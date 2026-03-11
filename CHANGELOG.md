@@ -1,3 +1,10 @@
+## [1.1.7](https://github.com/pgagnidze/repocard/compare/v1.1.6...v1.1.7) (2026-03-11)
+
+
+### Bug Fixes
+
+* shrink card canvas to 600x314 with scaled-down components for social media readability ([67dcf2a](https://github.com/pgagnidze/repocard/commit/67dcf2a34411af739dff22a09a7017453fa888f6))
+
 ## [1.1.6](https://github.com/pgagnidze/repocard/compare/v1.1.5...v1.1.6) (2026-03-11)
 
 
