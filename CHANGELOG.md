@@ -1,3 +1,11 @@
+## [1.1.6](https://github.com/pgagnidze/repocard/compare/v1.1.5...v1.1.6) (2026-03-11)
+
+
+### Bug Fixes
+
+* add opt-in readme em-dash and emoji stats via --readme-stats flag ([bedbcd0](https://github.com/pgagnidze/repocard/commit/bedbcd0c9d510acc14787bba8c814eea1a58db69))
+* format cli and github modules ([a0158bc](https://github.com/pgagnidze/repocard/commit/a0158bc655ad5216942a37010b53a46e58092059))
+
 ## [1.1.5](https://github.com/pgagnidze/repocard/compare/v1.1.4...v1.1.5) (2026-03-11)
 
 
