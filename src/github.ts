@@ -1,8 +1,11 @@
-import type { CardData, CardStyle, CommunityHealth, LanguageBreakdown, ReleaseInfo, RepoData } from './types.ts'
+import type { CardData, CardStyle, CommunityHealth, LanguageBreakdown, ReadmeStats, ReleaseInfo, RepoData } from './types.ts'
 
 const API_BASE = 'https://api.github.com'
-const STATS_RETRY_DELAY_MS = 3000
+const RETRY_DELAY_MS = 3000
+const API_MAX_RETRIES = 3
 const STATS_MAX_RETRIES = 10
+
+const RETRYABLE_STATUSES = new Set([500, 503])
 
 function buildHeaders(token?: string): Record<string, string> {
   const headers: Record<string, string> = {
@@ -15,8 +18,44 @@ function buildHeaders(token?: string): Record<string, string> {
   return headers
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+interface FetchOptions {
+  maxRetries: number
+  retryOn202?: boolean
+}
+
+async function fetchWithRetry(path: string, token: string | undefined, opts: FetchOptions): Promise<Response | null> {
+  for (let attempt = 0; attempt < opts.maxRetries; attempt++) {
+    try {
+      const response = await fetch(`${API_BASE}${path}`, { headers: buildHeaders(token) })
+      const shouldRetry = RETRYABLE_STATUSES.has(response.status) || (opts.retryOn202 && response.status === 202)
+
+      if (shouldRetry && attempt < opts.maxRetries - 1) {
+        await sleep(RETRY_DELAY_MS)
+        continue
+      }
+
+      return response
+    } catch {
+      if (attempt < opts.maxRetries - 1) {
+        await sleep(RETRY_DELAY_MS)
+        continue
+      }
+      return null
+    }
+  }
+  return null
+}
+
 async function apiFetch<T>(path: string, token?: string): Promise<T> {
-  const response = await fetch(`${API_BASE}${path}`, { headers: buildHeaders(token) })
+  const response = await fetchWithRetry(path, token, { maxRetries: API_MAX_RETRIES })
+
+  if (!response) {
+    throw new Error(`GitHub API failed after ${API_MAX_RETRIES} retries for ${path}`)
+  }
 
   if (!response.ok) {
     const remaining = response.headers.get('X-RateLimit-Remaining')
@@ -31,26 +70,14 @@ async function apiFetch<T>(path: string, token?: string): Promise<T> {
   return response.json() as Promise<T>
 }
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
 async function apiFetchWithRetry<T>(path: string, token?: string): Promise<T | null> {
-  for (let attempt = 0; attempt < STATS_MAX_RETRIES; attempt++) {
-    const response = await fetch(`${API_BASE}${path}`, { headers: buildHeaders(token) })
+  const response = await fetchWithRetry(path, token, { maxRetries: STATS_MAX_RETRIES, retryOn202: true })
 
-    if (response.status === 202) {
-      await sleep(STATS_RETRY_DELAY_MS)
-      continue
-    }
-
-    if (!response.ok) {
-      return null
-    }
-
-    return response.json() as Promise<T>
+  if (!response || !response.ok) {
+    return null
   }
-  return null
+
+  return response.json() as Promise<T>
 }
 
 interface GitHubRepo {
@@ -125,7 +152,12 @@ async function fetchRepo(owner: string, repo: string, token?: string): Promise<R
 }
 
 async function fetchLanguages(owner: string, repo: string, token?: string): Promise<LanguageBreakdown> {
-  return apiFetch<LanguageBreakdown>(`/repos/${owner}/${repo}/languages`, token)
+  try {
+    return await apiFetch<LanguageBreakdown>(`/repos/${owner}/${repo}/languages`, token)
+  } catch {
+    console.warn(`[warn] Could not fetch languages for ${owner}/${repo}. Language bar will be empty.`)
+    return {}
+  }
 }
 
 async function fetchOpenPullRequestCount(owner: string, repo: string, token?: string): Promise<number> {
@@ -174,22 +206,49 @@ async function fetchCommunityHealth(owner: string, repo: string, token?: string)
   }
 }
 
-export async function fetchCardData(owner: string, repo: string, token?: string, style?: CardStyle): Promise<CardData> {
+// Unicode emoji regex: matches most common emoji (emoticons, symbols, flags, skin tones, ZWJ sequences)
+const EMOJI_RE = /\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu
+
+async function fetchReadmeStats(owner: string, repo: string, token?: string): Promise<ReadmeStats | null> {
+  const data = await apiFetchWithRetry<{ content: string; encoding: string }>(
+    `/repos/${owner}/${repo}/readme`,
+    token,
+  )
+  if (!data || data.encoding !== 'base64') {
+    return null
+  }
+
+  const content = Buffer.from(data.content, 'base64').toString('utf-8')
+  const emDashCount = (content.match(/\u2014/g) || []).length
+  const emojiCount = (content.match(EMOJI_RE) || []).length
+
+  return { emDashCount, emojiCount }
+}
+
+export interface FetchCardOptions {
+  token?: string
+  style?: CardStyle
+  readmeStats?: boolean
+}
+
+export async function fetchCardData(owner: string, repo: string, opts: FetchCardOptions = {}): Promise<CardData> {
+  const { token, style, readmeStats: includeReadmeStats } = opts
   const needsDetailed = style === 'detailed' || style == null
 
-  const [repoData, languages, commitActivity, release, health, openPrCount] = await Promise.all([
+  const [repoData, languages, commitActivity, release, health, openPrCount, readmeStats] = await Promise.all([
     fetchRepo(owner, repo, token),
     fetchLanguages(owner, repo, token),
     fetchCommitActivity(owner, repo, token),
     fetchLatestRelease(owner, repo, token),
     needsDetailed ? fetchCommunityHealth(owner, repo, token) : Promise.resolve(null),
     needsDetailed ? fetchOpenPullRequestCount(owner, repo, token).catch(() => 0) : Promise.resolve(0),
+    includeReadmeStats ? fetchReadmeStats(owner, repo, token) : Promise.resolve(null),
   ])
 
   repoData.openPullRequests = openPrCount
   repoData.openIssues = Math.max(repoData.openIssues - openPrCount, 0)
 
-  return { repo: repoData, languages, commitActivity, release, health }
+  return { repo: repoData, languages, commitActivity, release, health, readmeStats }
 }
 
 export function parseRepoInput(input: string): { owner: string; repo: string } {

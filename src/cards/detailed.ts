@@ -145,7 +145,7 @@ function renderBanner(data: CardData): string {
 
 function renderDefault(data: CardData, size: CardSize): string {
   const { width, height } = CARD_DIMENSIONS[size]
-  const { repo, languages, commitActivity, release, health } = data
+  const { repo, languages, commitActivity, release, health, readmeStats } = data
   const pad = 32
   const contentWidth = width - pad * 2
   const isLandscape = size === 'landscape'
@@ -236,6 +236,15 @@ function renderDefault(data: CardData, size: CardSize): string {
         : ''
     }
   </g>
+
+  ${
+    readmeStats
+      ? `<text x="${width - pad}" y="${statsY + 10}" font-family="${FONTS.mono}" font-size="10" text-anchor="end">
+        <tspan fill="${COLORS.textMuted}" font-size="9">README </tspan><tspan fill="${COLORS.textMuted}"> em-dash </tspan><tspan fill="${COLORS.textSecondary}" font-weight="600">${readmeStats.emDashCount}</tspan>
+        <tspan fill="${COLORS.textMuted}">   emoji </tspan><tspan fill="${COLORS.textSecondary}" font-weight="600">${readmeStats.emojiCount}</tspan>
+      </text>`
+      : ''
+  }
 
   ${
     hasActivity

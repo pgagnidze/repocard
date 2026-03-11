@@ -42,12 +42,18 @@ export interface CommunityHealth {
   hasLicense: boolean
 }
 
+export interface ReadmeStats {
+  emDashCount: number
+  emojiCount: number
+}
+
 export interface CardData {
   repo: RepoData
   languages: LanguageBreakdown
   commitActivity: number[]
   release: ReleaseInfo | null
   health: CommunityHealth | null
+  readmeStats: ReadmeStats | null
 }
 
 export type CardStyle = 'minimal' | 'detailed'

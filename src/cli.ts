@@ -85,6 +85,7 @@ const HELP = `
     --out-dir <dir>       Output directory                 (default: ./output)
     --svg                 Also save the SVG source
     --token <token>       GitHub API token
+    --readme-stats        Show em-dash and emoji counts from README
     --all                 Generate all styles at once
     --no-color            Disable colors
     -h, --help            Show this help
@@ -109,11 +110,12 @@ async function generateSingle(
   outDir: string,
   shouldSaveSvg: boolean,
   token: string | undefined,
+  readmeStats: boolean,
 ): Promise<void> {
   const { owner, repo } = parseRepoInput(repoInput)
 
   info(`Fetching ${owner}/${repo}...`)
-  const data = await fetchCardData(owner, repo, token, cardStyle)
+  const data = await fetchCardData(owner, repo, { token, style: cardStyle, readmeStats })
 
   info(`Rendering ${cardStyle} card...`)
   const result = await generateCard(data, cardStyle, size)
@@ -135,11 +137,12 @@ async function generateAll(
   outDir: string,
   shouldSaveSvg: boolean,
   token: string | undefined,
+  readmeStats: boolean,
 ): Promise<void> {
   const { owner, repo } = parseRepoInput(repoInput)
 
   info(`Fetching ${owner}/${repo}...`)
-  const data = await fetchCardData(owner, repo, token)
+  const data = await fetchCardData(owner, repo, { token, readmeStats })
 
   for (const cardStyle of VALID_STYLES) {
     info(`Rendering ${cardStyle} card...`)
@@ -169,6 +172,7 @@ async function batchGenerate(
   outDir: string,
   shouldSaveSvg: boolean,
   token: string | undefined,
+  readmeStats: boolean,
 ): Promise<void> {
   const content = await readFile(resolve(filePath), 'utf-8')
   const entries = JSON.parse(content) as BatchEntry[]
@@ -179,7 +183,7 @@ async function batchGenerate(
     const cardStyle = entry.style ?? defaultStyle
     try {
       const { owner, repo } = parseRepoInput(entry.repo)
-      const data = await fetchCardData(owner, repo, token, cardStyle)
+      const data = await fetchCardData(owner, repo, { token, style: cardStyle, readmeStats })
       const result = await generateCard(data, cardStyle, size)
       const outFile = join(outDir, `${repo}-${cardStyle}.png`)
       await saveCard(result, outFile)
@@ -205,6 +209,7 @@ async function main(): Promise<void> {
       'out-dir': { type: 'string', default: './output' },
       svg: { type: 'boolean', default: false },
       token: { type: 'string', default: process.env.GITHUB_TOKEN },
+      'readme-stats': { type: 'boolean', default: false },
       all: { type: 'boolean', default: false },
       'no-color': { type: 'boolean', default: false },
       version: { type: 'boolean', short: 'v', default: false },
@@ -244,9 +249,9 @@ async function main(): Promise<void> {
     }
 
     if (values.all) {
-      await generateAll(repoInput, size, values['out-dir']!, values.svg!, values.token)
+      await generateAll(repoInput, size, values['out-dir']!, values.svg!, values.token, values['readme-stats']!)
     } else {
-      await generateSingle(repoInput, cardStyle, size, values.out, values['out-dir']!, values.svg!, values.token)
+      await generateSingle(repoInput, cardStyle, size, values.out, values['out-dir']!, values.svg!, values.token, values['readme-stats']!)
     }
   } else if (command === 'batch') {
     const filePath = positionals[1]
@@ -254,7 +259,7 @@ async function main(): Promise<void> {
       error('Missing file argument. Usage: repocard batch repos.json')
       process.exit(1)
     }
-    await batchGenerate(filePath, cardStyle, size, values['out-dir']!, values.svg!, values.token)
+    await batchGenerate(filePath, cardStyle, size, values['out-dir']!, values.svg!, values.token, values['readme-stats']!)
   } else {
     error(`Unknown command: ${command}`)
     process.stdout.write(HELP)
