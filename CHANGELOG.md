@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/pgagnidze/repocard/compare/v1.1.4...v1.1.5) (2026-03-11)
+
+
+### Bug Fixes
+
+* compact card layout with better alignment and sparkline resilience ([b46622a](https://github.com/pgagnidze/repocard/commit/b46622a32d93cddb4d0b7d7f0b813e30d3c9f622))
+
 ## [1.1.4](https://github.com/pgagnidze/repocard/compare/v1.1.3...v1.1.4) (2026-03-10)
 
 
