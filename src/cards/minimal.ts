@@ -7,16 +7,16 @@ import { COLORS, FONTS, forkSvg, starSvg } from './shared.ts'
 export function renderMinimal(data: CardData, size: CardSize): string {
   const { width, height } = CARD_DIMENSIONS[size]
   const { repo } = data
-  const pad = 56
+  const isBanner = size === 'banner'
+  const isSquare = size === 'square'
+  const pad = isBanner ? 56 : 36
 
   const primaryLang = repo.language
   const langColor = primaryLang ? (LANGUAGE_COLORS[primaryLang] ?? COLORS.accentLight) : COLORS.accent
   const stars = formatCount(repo.stars)
   const forks = formatCount(repo.forks)
 
-  const isBanner = size === 'banner'
-  const isSquare = size === 'square'
-  const maxDescLen = isBanner ? 80 : isSquare ? 140 : 100
+  const maxDescLen = isBanner ? 80 : isSquare ? 140 : 90
   const description = truncate(repo.description, maxDescLen)
 
   const nameFontSize = isBanner
@@ -26,10 +26,10 @@ export function renderMinimal(data: CardData, size: CardSize): string {
         ? 42
         : 48
     : repo.name.length > 20
-      ? 40
+      ? 32
       : repo.name.length > 14
-        ? 50
-        : 60
+        ? 40
+        : 48
 
   const nameY = isSquare ? height / 2 - 20 : height / 2 - 10
   const ownerY = pad

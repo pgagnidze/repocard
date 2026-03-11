@@ -6,7 +6,7 @@ import { dirname } from 'node:path'
 import { CARD_DIMENSIONS } from './types.ts'
 import { renderCard } from './cards/index.ts'
 
-const RENDER_SCALE = 2
+const RENDER_SCALE = 3
 
 export interface RenderResult {
   svg: string

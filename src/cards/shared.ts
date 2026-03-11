@@ -81,8 +81,8 @@ export function healthDots(
       const dotColor = item.has ? COLORS.success : COLORS.textMuted
       const dotOpacity = item.has ? '0.8' : '0.3'
       const result = `
-      <circle cx="${x + offsetX + 4}" cy="${y + 4}" r="3" fill="${dotColor}" opacity="${dotOpacity}"/>
-      <text x="${x + offsetX + 12}" y="${y + 8}" font-family="${FONTS.mono}" font-size="9" fill="${COLORS.textMuted}" letter-spacing="0.3">${item.label}</text>`
+      <circle cx="${x + offsetX + 4}" cy="${y + 5}" r="3" fill="${dotColor}" opacity="${dotOpacity}"/>
+      <text x="${x + offsetX + 12}" y="${y + 9}" font-family="${FONTS.mono}" font-size="9" fill="${COLORS.textMuted}" letter-spacing="0.3">${item.label}</text>`
       offsetX += 12 + item.label.length * 5.5 + 12
       return result
     })

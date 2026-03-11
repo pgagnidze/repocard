@@ -54,8 +54,8 @@ export type CardStyle = 'minimal' | 'detailed'
 export type CardSize = 'landscape' | 'square' | 'banner'
 
 export const CARD_DIMENSIONS = {
-  landscape: { width: 1200, height: 628 },
-  square: { width: 1080, height: 1080 },
+  landscape: { width: 800, height: 418 },
+  square: { width: 800, height: 800 },
   banner: { width: 1500, height: 500 },
 } as const
 

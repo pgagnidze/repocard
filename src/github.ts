@@ -1,8 +1,8 @@
 import type { CardData, CardStyle, CommunityHealth, LanguageBreakdown, ReleaseInfo, RepoData } from './types.ts'
 
 const API_BASE = 'https://api.github.com'
-const STATS_RETRY_DELAY_MS = 2000
-const STATS_MAX_RETRIES = 6
+const STATS_RETRY_DELAY_MS = 3000
+const STATS_MAX_RETRIES = 10
 
 function buildHeaders(token?: string): Record<string, string> {
   const headers: Record<string, string> = {
@@ -144,7 +144,8 @@ async function fetchCommitActivity(owner: string, repo: string, token?: string):
     )
     return []
   }
-  return data.map((week) => week.total)
+  const allWeeks = data.map((week) => week.total)
+  return allWeeks.slice(-26)
 }
 
 async function fetchLatestRelease(owner: string, repo: string, token?: string): Promise<ReleaseInfo | null> {
