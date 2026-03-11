@@ -52,12 +52,12 @@ export function sparkline(
 
 export function versionBadge(tagName: string, x: number, y: number, prerelease = false): string {
   const color = prerelease ? COLORS.warning : COLORS.success
-  const textWidth = tagName.length * 7.5 + 20
+  const textWidth = tagName.length * 6 + 16
 
   return `
-    <rect x="${x}" y="${y}" width="${textWidth}" height="22" rx="11" fill="${color}" opacity="0.12"/>
-    <rect x="${x}" y="${y}" width="${textWidth}" height="22" rx="11" fill="none" stroke="${color}" stroke-width="1" opacity="0.4"/>
-    <text x="${x + textWidth / 2}" y="${y + 15}" font-family="${FONTS.mono}" font-size="11" fill="${color}" text-anchor="middle" font-weight="500">${escapeXml(tagName)}</text>`
+    <rect x="${x}" y="${y}" width="${textWidth}" height="18" rx="9" fill="${color}" opacity="0.12"/>
+    <rect x="${x}" y="${y}" width="${textWidth}" height="18" rx="9" fill="none" stroke="${color}" stroke-width="1" opacity="0.4"/>
+    <text x="${x + textWidth / 2}" y="${y + 12.5}" font-family="${FONTS.mono}" font-size="9" fill="${color}" text-anchor="middle" font-weight="500">${escapeXml(tagName)}</text>`
 }
 
 export function healthDots(
@@ -81,9 +81,9 @@ export function healthDots(
       const dotColor = item.has ? COLORS.success : COLORS.textMuted
       const dotOpacity = item.has ? '0.8' : '0.3'
       const result = `
-      <circle cx="${x + offsetX + 4}" cy="${y + 5}" r="3" fill="${dotColor}" opacity="${dotOpacity}"/>
-      <text x="${x + offsetX + 12}" y="${y + 9}" font-family="${FONTS.mono}" font-size="9" fill="${COLORS.textMuted}" letter-spacing="0.3">${item.label}</text>`
-      offsetX += 12 + item.label.length * 5.5 + 12
+      <circle cx="${x + offsetX + 3}" cy="${y + 4}" r="2.5" fill="${dotColor}" opacity="${dotOpacity}"/>
+      <text x="${x + offsetX + 9}" y="${y + 7}" font-family="${FONTS.mono}" font-size="7" fill="${COLORS.textMuted}" letter-spacing="0.3">${item.label}</text>`
+      offsetX += 9 + item.label.length * 4.2 + 10
       return result
     })
     .join('\n')
@@ -132,16 +132,16 @@ export function topicPills(topics: string[], x: number, y: number, maxWidth: num
   const pills: string[] = []
 
   for (const topic of topics.slice(0, 8)) {
-    const textWidth = topic.length * 7 + 16
+    const textWidth = topic.length * 5.5 + 14
     if (offsetX + textWidth > maxWidth) {
       break
     }
 
     pills.push(`
-      <rect x="${x + offsetX}" y="${y}" width="${textWidth}" height="24" rx="12" fill="${COLORS.accentBg}" stroke="${COLORS.accentDark}" stroke-width="1"/>
-      <text x="${x + offsetX + textWidth / 2}" y="${y + 16}" font-family="${FONTS.sans}" font-size="11" fill="${COLORS.accentLight}" text-anchor="middle" letter-spacing="0.5">${escapeXml(topic)}</text>
+      <rect x="${x + offsetX}" y="${y}" width="${textWidth}" height="18" rx="9" fill="${COLORS.accentBg}" stroke="${COLORS.accentDark}" stroke-width="1"/>
+      <text x="${x + offsetX + textWidth / 2}" y="${y + 12}" font-family="${FONTS.sans}" font-size="9" fill="${COLORS.accentLight}" text-anchor="middle" letter-spacing="0.3">${escapeXml(topic)}</text>
     `)
-    offsetX += textWidth + 8
+    offsetX += textWidth + 6
   }
 
   return pills.join('\n')

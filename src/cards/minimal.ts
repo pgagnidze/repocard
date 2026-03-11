@@ -65,11 +65,11 @@ export function renderMinimal(data: CardData, size: CardSize): string {
     </pattern>
   </defs>
 
-  <rect width="${width}" height="${height}" rx="20" fill="url(#m-bg)"/>
-  <rect width="${width}" height="${height}" rx="20" fill="url(#m-orb1)"/>
-  <rect width="${width}" height="${height}" rx="20" fill="url(#m-orb2)"/>
-  <rect width="${width}" height="${height}" rx="20" fill="url(#m-grid)" opacity="0.4"/>
-  <rect width="${width}" height="${height}" rx="20" fill="none" stroke="${COLORS.cardBorder}" stroke-width="1"/>
+  <rect width="${width}" height="${height}" rx="12" fill="url(#m-bg)"/>
+  <rect width="${width}" height="${height}" rx="12" fill="url(#m-orb1)"/>
+  <rect width="${width}" height="${height}" rx="12" fill="url(#m-orb2)"/>
+  <rect width="${width}" height="${height}" rx="12" fill="url(#m-grid)" opacity="0.4"/>
+  <rect width="${width}" height="${height}" rx="12" fill="none" stroke="${COLORS.cardBorder}" stroke-width="1"/>
 
   <text x="${pad}" y="${ownerY}" font-family="${FONTS.mono}" font-size="${isBanner ? 13 : 14}" fill="${COLORS.textMuted}" letter-spacing="1">${escapeXml(repo.owner.login)}</text>
 
