@@ -251,7 +251,16 @@ async function main(): Promise<void> {
     if (values.all) {
       await generateAll(repoInput, size, values['out-dir']!, values.svg!, values.token, values['readme-stats']!)
     } else {
-      await generateSingle(repoInput, cardStyle, size, values.out, values['out-dir']!, values.svg!, values.token, values['readme-stats']!)
+      await generateSingle(
+        repoInput,
+        cardStyle,
+        size,
+        values.out,
+        values['out-dir']!,
+        values.svg!,
+        values.token,
+        values['readme-stats']!,
+      )
     }
   } else if (command === 'batch') {
     const filePath = positionals[1]
@@ -259,7 +268,15 @@ async function main(): Promise<void> {
       error('Missing file argument. Usage: repocard batch repos.json')
       process.exit(1)
     }
-    await batchGenerate(filePath, cardStyle, size, values['out-dir']!, values.svg!, values.token, values['readme-stats']!)
+    await batchGenerate(
+      filePath,
+      cardStyle,
+      size,
+      values['out-dir']!,
+      values.svg!,
+      values.token,
+      values['readme-stats']!,
+    )
   } else {
     error(`Unknown command: ${command}`)
     process.stdout.write(HELP)

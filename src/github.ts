@@ -1,4 +1,12 @@
-import type { CardData, CardStyle, CommunityHealth, LanguageBreakdown, ReadmeStats, ReleaseInfo, RepoData } from './types.ts'
+import type {
+  CardData,
+  CardStyle,
+  CommunityHealth,
+  LanguageBreakdown,
+  ReadmeStats,
+  ReleaseInfo,
+  RepoData,
+} from './types.ts'
 
 const API_BASE = 'https://api.github.com'
 const RETRY_DELAY_MS = 3000
@@ -210,10 +218,7 @@ async function fetchCommunityHealth(owner: string, repo: string, token?: string)
 const EMOJI_RE = /\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu
 
 async function fetchReadmeStats(owner: string, repo: string, token?: string): Promise<ReadmeStats | null> {
-  const data = await apiFetchWithRetry<{ content: string; encoding: string }>(
-    `/repos/${owner}/${repo}/readme`,
-    token,
-  )
+  const data = await apiFetchWithRetry<{ content: string; encoding: string }>(`/repos/${owner}/${repo}/readme`, token)
   if (!data || data.encoding !== 'base64') {
     return null
   }
