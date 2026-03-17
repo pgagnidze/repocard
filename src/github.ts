@@ -145,7 +145,8 @@ async function fetchRepo(owner: string, repo: string, token?: string): Promise<R
     openPullRequests: 0,
     language: data.language,
     topics: data.topics,
-    license: data.license?.spdx_id && !['NOASSERTION', 'NONE'].includes(data.license.spdx_id) ? data.license.spdx_id : null,
+    license:
+      data.license?.spdx_id && !['NOASSERTION', 'NONE'].includes(data.license.spdx_id) ? data.license.spdx_id : null,
     owner: {
       login: data.owner.login,
       avatarUrl: data.owner.avatar_url,
