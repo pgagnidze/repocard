@@ -1,3 +1,11 @@
+## [1.1.8](https://github.com/pgagnidze/repocard/compare/v1.1.7...v1.1.8) (2026-03-17)
+
+
+### Bug Fixes
+
+* filter NOASSERTION/NONE license spdx ids and guard non-array commit activity response ([ab985fe](https://github.com/pgagnidze/repocard/commit/ab985fea8ce35f8a179e209bfb7eccb5d7754e20))
+* github.ts formatting applied ([2b87206](https://github.com/pgagnidze/repocard/commit/2b87206b06195bfbb85cdaa32c09aeff1be6560b))
+
 ## [1.1.7](https://github.com/pgagnidze/repocard/compare/v1.1.6...v1.1.7) (2026-03-11)
 
 
